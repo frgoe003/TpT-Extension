@@ -1,8 +1,3 @@
-
-console.log('you\'r in the world of content.js');
-
-
-
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
       if (message.id === "checkSales"){
@@ -11,12 +6,8 @@ chrome.runtime.onMessage.addListener(
       }
     }
   );
-  
 
-
-
-
-  async function retrieveSales() {
+async function retrieveSales() {
 
     url="https://www.teacherspayteachers.com/My-Sales";
   
@@ -32,14 +23,14 @@ chrome.runtime.onMessage.addListener(
       console.log(error); //DISPLAY LOGGED OUT
     });
   }
-  function extractContent(str) {
+function extractContent(str) {
     var parser = new DOMParser();
       var doc = parser.parseFromString(str, 'text/html');
     var body = doc.querySelectorAll(".odd, .even");
       return body;
   };
   
-  function extractSales(NodeList){
+function extractSales(NodeList){
     const len = NodeList.length;
     let salesList = [];let dateList = [];let earningsList = []; let itemList = [];
     for (let i=0; i<len;i++){
