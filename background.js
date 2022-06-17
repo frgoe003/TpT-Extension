@@ -26,7 +26,7 @@ function updateBadge(data){
     loggedStatus = true;
     chrome.action.setIcon({path:"images/icon32.png"});
     chrome.action.setBadgeBackgroundColor({color:[19, 93, 145, 1]}); //(19, 93, 145, 1)
-    chrome.action.setBadgeText({text:(""+data)});
+    chrome.action.setBadgeText({text:(""+data)}); //
   }
 }
 

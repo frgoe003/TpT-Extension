@@ -7,13 +7,8 @@
    "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["notifications","storage", "activeTab", "alarms", "scripting", "downloads"],
+  "permissions": ["alarms"],
   "host_permissions": ["*://*.teacherspayteachers.com/*"],
-  "content_scripts": [{
-     "matches": ["*://*.teacherspayteachers.com/*"],
-     "exclude_matches": [],
-     "js": ["contentScript.js"]
-     }],
    "action": {
       "default_popup": "popup.html",
       "default_icon": {
