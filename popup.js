@@ -9,6 +9,12 @@ let monthlyEarnings = document.getElementById("monthlyEarnings");
 let monthlyCircle = document.getElementById("monthlyCircle");
 let imageInput = document.getElementById("image");
 let nameInput = document.getElementById("name");
+let lastSalesCount = 3;
+
+chrome.storage.sync.get(['lastSalesCount'], function(result) {
+  lastSalesCount = result.lastSalesCount;
+});
+
 
 startup();
 chrome.runtime.sendMessage({id:"updateBadge"});
@@ -23,7 +29,9 @@ window.addEventListener('click',function(e){
 -check if logged out -> update popup html
 -remove unnecessary permissions from manifest
 misc:
-
+options.html 
+-add feature to control latest sales count
+-add feature to set target -> adjust ring percentages dynamically
 */
 
 function startup(){
@@ -65,7 +73,6 @@ async function retrieveSales(url,mode) {
     
     arr = extractContent(responseText);
     table=arr[0];totals=arr[1];
-    salesMatrix = extractSales(table);
 
     if (!totals.item(1)){
       earnings="0";
@@ -102,7 +109,8 @@ function extractContent(str) {
 
 function extractSales(NodeList){
 
-  const len = NodeList.length;
+  const len = Math.min(NodeList.length,lastSalesCount);
+  console.log(len);
   let dateList = [];let salesList = []; let earningsList = []; let itemList = [];
 
   for (let i=0; i<len;i++){
@@ -117,16 +125,13 @@ function extractSales(NodeList){
     salesList.push(sale);
     earningsList.push(earnings);
     itemList.push(itemSold);
-    if (i==2){
-      break
-    }
   }
   salesMatrix=[dateList,itemList,earningsList]; //salesList,
   return salesMatrix
 }
 
 function updateSalesTable(salesMatrix){
-  for (let i=0; i<3;i++){
+  for (let i=0; i<lastSalesCount;i++){
     var row = document.createElement("div");
     row.classList.add("row");
     for (let j=0;j<=2;j++){

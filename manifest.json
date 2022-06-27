@@ -7,7 +7,7 @@
    "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["alarms"],
+  "permissions": ["alarms","storage"],
   "host_permissions": ["*://*.teacherspayteachers.com/*"],
    "action": {
       "default_popup": "popup.html",

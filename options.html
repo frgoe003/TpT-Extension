@@ -1,14 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="button.css">
-  </head>
-  <body>
-    <div id="buttonDiv">
-    </div>
-    <div>
-      <p>Choose a different background color!</p>
-    </div>
-  </body>
-  <script src="options.js"></script>
+<head><title>My Test Extension Options</title>
+  <link href="bs5/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<link href="options.css" rel="stylesheet">
+
+Favorite color:
+<select id="color">
+ <option value="red">red</option>
+ <option value="green">green</option>
+ <option value="blue">blue</option>
+ <option value="yellow">yellow</option>
+</select>
+
+<label>
+  <input type="checkbox" id="like">
+  I like colors.
+</label>
+
+
+
+
+<div class="range-wrap">
+  <div class="range-value" id="rangeV"></div>
+  <input id="range" type="range" min="1" max="25" value="3" step="1">
+</div>
+
+<div id="status"></div>
+<button id="save">Save</button>
+<script src="bs5/js/bootstrap.js"></script>
+<script src="options.js"></script>
+
+</body>
 </html>
