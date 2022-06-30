@@ -9,10 +9,15 @@ let monthlyEarnings = document.getElementById("monthlyEarnings");
 let monthlyCircle = document.getElementById("monthlyCircle");
 let imageInput = document.getElementById("image");
 let nameInput = document.getElementById("name");
+let goal = document.getElementById("goal");
 let lastSalesCount = 3;
+let earningsGoal = 10;
+let goalDay = false; let goalMonth = false; goalWeek = false; 
 
-chrome.storage.sync.get(['lastSalesCount'], function(result) {
+chrome.storage.sync.get(function(result) {
   lastSalesCount = result.lastSalesCount;
+  earningsGoal = parseInt(result.earningsGoal);
+  console.log(lastSalesCount,earningsGoal);
 });
 
 
@@ -109,11 +114,10 @@ function extractContent(str) {
 
 function extractSales(NodeList){
 
-  const len = Math.min(NodeList.length,lastSalesCount);
-  console.log(len);
+  lastSalesCount = Math.min(NodeList.length,lastSalesCount);
   let dateList = [];let salesList = []; let earningsList = []; let itemList = [];
 
-  for (let i=0; i<len;i++){
+  for (let i=0; i<lastSalesCount;i++){
     curr = NodeList.item(i);
     date = curr.cells.item(0).innerHTML;
     s= curr.cells.item(2).textContent;
@@ -131,6 +135,7 @@ function extractSales(NodeList){
 }
 
 function updateSalesTable(salesMatrix){
+  const len = Math.min(NodeList.length,lastSalesCount);
   for (let i=0; i<lastSalesCount;i++){
     var row = document.createElement("div");
     row.classList.add("row");
@@ -156,21 +161,133 @@ function updateTotals(earnings,mode){
     case "week":
       weekly=parseFloat(earnings.replace("$",""));
       weeklyEarnings.innerHTML = "$"+weekly;
-      var percentage = parseInt(getDecimalPart(weekly));
-      weeklyCircle.className = "ecircle c100 p"+ percentage +" small green";
+
+      arr=getPercentage(weekly,"week");
+      var lvl=arr[0];
+      var percentage = parseInt(arr[1]).toString();
+
+      switch(lvl){
+        case 0:
+          goalWeek= false;
+          weeklyCircle.className = "ecircle c100 p"+ percentage +" small green";
+          break
+        case 1:
+          goalWeek= true;
+          weeklyCircle.className = "ecircle c100 p"+ percentage +" small orange";
+          if (!goalDay){
+            goal.className = "orange";
+            beatenBy = ((lvl-1)*100)+parseInt(percentage);
+            goal.innerHTML = "You beat your weekly goal by " + beatenBy +"% " + "&#x1F389";
+          }
+          break
+        default:
+          goalWeek= true;
+          if (!goalDay){
+            goal.className = "pink";
+            beatenBy = ((lvl-1)*100)+parseInt(percentage);
+            goal.innerHTML = "You beat your weekly goal by " + beatenBy +"%" + "&#x1F37E";
+          }
+          weeklyCircle.className = "ecircle c100 p"+ percentage +" small pink";
+      }
       break
+
     case "month":
       monthly=parseFloat(earnings.replace("$",""));
       monthlyEarnings.innerHTML = "$"+monthly;
-      var percentage = parseInt(getDecimalPart(monthly));
-      monthlyCircle.className = "ecircle c100 p"+ percentage +" small green"; 
+
+      arr=getPercentage(monthly,"month");
+      var lvl=arr[0];
+      var percentage = parseInt(arr[1]).toString();
+      
+      console.log(arr);
+      switch(lvl){
+        case 0:
+          goalMonth = false;
+          monthlyCircle.className = "ecircle c100 p"+ percentage +" small green"; 
+          break
+        case 1:
+          if (!goalDay && !goalWeek){
+            goal.className = "orange";
+            beatenBy = ((lvl-1)*100)+parseInt(percentage);
+            goal.innerHTML = " You beat your monthly goal by " + beatenBy +"% " + "&#x1F389";
+          }
+          monthlyCircle.className = "ecircle c100 p"+ percentage +" small orange"; 
+          break
+        default:
+          goalMonth= true;
+          if (!goalDay && !goalWeek){
+            goal.className = "pink";
+            beatenBy = ((lvl-1)*100)+parseInt(percentage);
+            goal.innerHTML = "You beat your monthly goal by " + beatenBy +"%" + "&#x1F37E";
+          }
+          monthlyCircle.className = "ecircle c100 p"+ percentage +" small pink"; 
+      }
       break
+
     default:
       todays=parseFloat(earnings.replace("$",""));
       todaysEarnings.innerHTML = "$"+todays;
-      var percentage = parseInt(getDecimalPart(todays));
-      todaysCircle.className = "ecircle c100 p"+ percentage +" small green";
+
+      arr=getPercentage(todays);
+      var lvl=arr[0];
+      var percentage = parseInt(arr[1]).toString();
+
+      switch(lvl){
+        case 0:
+          todaysCircle.className = "ecircle c100 p"+ percentage +" small green";
+          break
+        case 1:
+          todaysCircle.className = "ecircle c100 p"+ percentage +" small orange";
+          goal.className = "orange";
+          beatenBy = ((lvl-1)*100)+parseInt(percentage);
+          goal.innerHTML = "You beat your daily goal by " + beatenBy +"% " + "&#x1F389";
+          break
+        default:
+          goal.className = "pink";
+          beatenBy = ((lvl-1)*100)+parseInt(percentage);
+          goal.innerHTML = "You beat your daily goal by " + beatenBy +"%" + "&#x1F37E"; //&#x + 🍾1F37E 🎉1F389 🎊1F38A 🥂1F942
+          todaysCircle.className = "ecircle c100 p"+ percentage +" small pink";
+      }
   }
+}
+
+function getPercentage(num,mode){
+  switch(mode){
+    case "week":
+      fraction=num/((earningsGoal/30)*7)
+      break
+    case "month":
+      fraction=num/(earningsGoal)
+      break
+    default:
+      fraction=num/(earningsGoal/30)
+  }
+  console.log(fraction);
+  return getDecimalPart(fraction)
+  
+}
+
+
+function getDecimalPart(num) {
+  let arr=[];
+  let lvl = parseInt(num);
+  arr.push(lvl);
+  if (Number.isInteger(num)) {
+    arr.push(0);
+    return arr
+  }
+  const decimalStr = num.toString().split('.')[1];
+
+  if (decimalStr.length>=2){
+    const sub = decimalStr.substring(0,2);
+    arr.push(sub);
+    return arr
+  }
+  if (decimalStr.length===1){
+    arr.push(decimalStr+"0");
+    return arr
+  }
+  return arr;
 }
 
 function getUrl(mode){
@@ -210,23 +327,6 @@ function getDate(mode){
   }
   return arr
 }
-
-
-function getDecimalPart(num) {
-  if (Number.isInteger(num)) {
-    return 0;
-  }
-  const decimalStr = num.toString().split('.')[1];
-  if (decimalStr.length>2){
-    const sub = decimalStr.substring(0,2);
-    return sub
-  }
-  if (decimalStr.length===1){
-    return decimalStr+"0"
-  }
-  return decimalStr;
-}
-
 
 function createTxt(string){
   var link = document.createElement('a');

@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click', save_options);
+daily = document.getElementById("daily");
+weekly = document.getElementById("weekly");
 
 range = document.getElementById('range'),
 rangeV = document.getElementById('rangeV'),
@@ -16,16 +18,17 @@ range.addEventListener('input', setValue);
 
 // Saves options to chrome.storage
 function save_options() {
-  console.log(range.value);
+  
   var range_val = range.value;
+  var earningsGoal = document.getElementById('earningsGoal').value;
+  console.log("New sales count:",range.value,"New monthly Goal:",earningsGoal);
 
-  var color = document.getElementById('color').value;
-  var likesColor = document.getElementById('like').checked;
+  daily.innerHTML = ((earningsGoal/30).toString()).substring(0,4) +"$"
+  weekly.innerHTML = ((earningsGoal/30*7).toString()).substring(0,4) +"$"
 
   chrome.storage.sync.set({
     lastSalesCount: range_val,
-    favoriteColor: color,
-    likesColor: likesColor
+    earningsGoal: earningsGoal,
   }, function() {
     // Update status to let user know options were saved.
     var status = document.getElementById('status');
@@ -41,10 +44,9 @@ function save_options() {
 function restore_options() {
   // Use default value color = 'red' and likesColor = true.
   chrome.storage.sync.get({
-    favoriteColor: 'red',
-    likesColor: true
+    lastSalesCount: 3,
+    earningsGoal: 10,
   }, function(items) {
-    document.getElementById('color').value = items.favoriteColor;
-    document.getElementById('like').checked = items.likesColor;
+
   });
 }

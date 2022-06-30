@@ -7,29 +7,36 @@
 
 <link href="options.css" rel="stylesheet">
 
-Favorite color:
-<select id="color">
- <option value="red">red</option>
- <option value="green">green</option>
- <option value="blue">blue</option>
- <option value="yellow">yellow</option>
-</select>
-
-<label>
-  <input type="checkbox" id="like">
-  I like colors.
-</label>
-
-
-
-
-<div class="range-wrap">
-  <div class="range-value" id="rangeV"></div>
-  <input id="range" type="range" min="1" max="25" value="3" step="1">
+<div id="header">
+  Adjust your TpT Seller Ext Settings:
 </div>
+
+<div>
+  Monthly goal:
+  <input id="earningsGoal" name="earningsGoal" type="text" value="10" placeholder="Enter amount" maxlength="7">$
+</div>
+<div class="earner">
+  <div class="earnings">
+    Weekly:<p class="earnings" id="weekly">2.33$</p>
+  </div>
+  <div class="earnings">
+    Daily:<p id="daily">0.33$</p>
+  </div>
+</div>
+
+<div class="range-set">
+  <p id="range-header">Show X last sales:</p>
+  <div class="range-wrap">
+  <div class="range-value" id="rangeV"></div>
+  <input id="range" type="range" min="1" max="15" value="3" step="1">
+</div>
+</div>
+
 
 <div id="status"></div>
 <button id="save">Save</button>
+
+
 <script src="bs5/js/bootstrap.js"></script>
 <script src="options.js"></script>
 
