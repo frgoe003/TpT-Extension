@@ -1,7 +1,7 @@
 {
    "name": "TpT Seller Ext",
    "description": "A free TpT popup dashboard that updates and notifies you as you sell",
-   "version": "1.0",
+   "version": "1.1",
    "manifest_version": 3,
    "options_page": "options.html",
    "background": {
